@@ -67,46 +67,6 @@
  ecall
 .end_macro 
 
-# checks that root value founds correctly according to diffirient tolerance values
-.macro checker %correct_answer %tolerance_array %size
-.text
- mv t3, %tolerance_array
- li t4, 0
-
-# for all tolerance values check if found root correspond them
-checker_for:
- bge t4, %size, checker_end
- 
- fld ft6, (t3)
- 
- addi t3, t3, 8
- addi t4, t4, 1
- 
- print_stri("\nTest case ")
- print_int(t4)
- print_stri(", tolerance = ")
- print_double(ft6)
- 
- fmv.d fa0, ft6
- jal search_x
- fsub.d ft7, fa0, %correct_answer
- fabs.d ft7, ft7
- 
- print_stri("\nDiffirience = ")
- print_double(ft7)
- 
- fle.d t5, ft7, ft6
- beqz t5, wa
- print_stri(": [+] OK!\n")
- j checker_for
-
-# if diffirience between found and correct values more that tolerance, print WA message
-wa: 
- print_stri(": [!] WA!\n")
- j checker_for
-checker_end:
-.end_macro
-
 # end of program with exit status 0
 .macro exit
  li a7, 10
@@ -116,11 +76,9 @@ checker_end:
 # show RARS dialog window with message immediately
 # Return:
 # a0 = Yes (0), No (1), or Cancel (2)
-.macro confirm_dialogi %message
-.data
- message: .asciz %message
+.macro confirm_dialog(%register)
 .text
- la a0, message
+ mv a0, %register
  li a7, 50
  ecall
 .end_macro 
@@ -132,6 +90,47 @@ checker_end:
  li a1, 0 # for error message
  li a7, 55 # syscall for display message to user
  ecall
+.end_macro
+
+# push register on stack
+.macro push %register
+.text
+ addi sp, sp, -4
+ sw %register, (sp)
 .end_macro 
+
+# pop register from stack
+.macro pop %register
+.text
+ lw %register, (sp)
+ addi sp, sp, 4
+.end_macro
+
+
+# calculate length of string before null-terminator
+# Input: %string - pointer at the start of string
+# Return: a0 - calculated length of string
+.macro strlen %string
+ push(t0)
+ push(t1)
+ push(t2)
+ 
+ strlen:
+    mv t2, %string
+    li      t0 0      # counter
+ loop:
+    lb      t1 (t2)   # loading char to compare
+    beqz    t1 end
+    addi    t0 t0 1   # counter = counter + 1
+    addi    t2 t2 1   # get next char
+    b       loop
+ end:
+    mv      a0 t0
+    
+ pop(t2)
+ pop(t1)
+ pop(t0)
+.end_macro 
+
 
 
