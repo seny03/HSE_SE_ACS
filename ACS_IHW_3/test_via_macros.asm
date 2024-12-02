@@ -16,7 +16,7 @@
  out5: .asciz "data/out5.txt"
  .align 2
  
-
+.text
 test1:
  test(inp1, out1, processing_msg)
 test2:
