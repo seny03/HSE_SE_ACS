@@ -119,3 +119,20 @@
  
  pop(ra)
 .end_macro 
+
+.macro test %inp %out %sep
+.data
+ counts: .word 128
+ res: .space 1024
+.text
+ la t0, %inp
+ la t1, %sep
+ print_str(t1)
+ print_str(t0)
+ read_file(t0)
+ count_displayable_chars(a0) # count all displayable chars in text
+ la s0, res
+ count2string(a0, s0) # convert counts array to string
+ la s1, %out
+ write_file(s1, s0) # write result in file
+.end_macro 

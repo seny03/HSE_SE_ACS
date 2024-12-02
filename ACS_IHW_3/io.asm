@@ -14,6 +14,7 @@ er_read_mes: .asciz "Incorrect read operation.\n"
 file_name: .space NAME_SIZE
 smallbuf:  .space SMALL_BUF_SIZE
 largebuf:  .space LARGE_BUF_SIZE
+.align 2
 
 .text
 
