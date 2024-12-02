@@ -120,6 +120,11 @@
  pop(ra)
 .end_macro 
 
+# Tests program on defined data
+# Input:
+# %inp - label of string with text: .txt file with input data
+# %out - label of string with text: .txt file for output
+# %sep - label of string with text: separator between tests info on console
 .macro test %inp %out %sep
 .data
  counts: .word 128
